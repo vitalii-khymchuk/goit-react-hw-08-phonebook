@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { editContact } from 'redux/operations';
+import { editContact } from 'redux/contacts/operations';
 import { selectContactsError } from 'redux/contacts/selectors';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
@@ -10,7 +10,7 @@ import {
 import { Box, Title } from 'components/reusableComponents';
 import base64userAvatar from 'photos/base64userAvatar';
 import Uploader from 'components/Uploader';
-import ContactsInput from 'components/ContactsForm';
+import ContactsInput from 'components/Forms/CreateContactForm';
 import Error from 'components/Error';
 import { useEffect } from 'react';
 

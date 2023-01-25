@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { getContactInfo, deleteContact } from 'redux/operations';
+import { getContactInfo, deleteContact } from 'redux/contacts/operations';
 import { clearContactsInfo } from 'redux/contacts/contactsSlice';
 import {
   selectContactInfo,

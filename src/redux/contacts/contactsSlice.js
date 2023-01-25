@@ -6,7 +6,7 @@ import {
   addContact,
   getContactInfo,
   editContact,
-} from '../operations';
+} from './operations';
 
 const initialState = {
   items: [],

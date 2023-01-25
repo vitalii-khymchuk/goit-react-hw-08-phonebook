@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from 'redux/operations';
+import { addContact } from 'redux/contacts/operations';
 import { selectContactsError } from 'redux/contacts/selectors';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CreateContNav, NavItem } from './CreateContact.styled';
 import { Box, Title } from 'components/reusableComponents';
 import base64userAvatar from 'photos/base64userAvatar';
 import Uploader from 'components/Uploader';
-import ContactsInput from 'components/ContactsForm';
+import ContactsForm from 'components/Forms/CreateContactForm';
 import Error from 'components/Error';
 
 const CreateContact = () => {
@@ -33,7 +33,7 @@ const CreateContact = () => {
   return (
     <Box display="grid" gridTemplateRows="50px 1fr">
       <CreateContNav CreateContNav>
-        <NavItem type="submit" form="my-form">
+        <NavItem type="submit" form="createContactForm">
           Save
         </NavItem>
         <NavItem type="button" onClick={onCancelClick}>
@@ -46,7 +46,7 @@ const CreateContact = () => {
       {!isSaving && !error && (
         <>
           <Uploader onPhotoUpload={onPhotoUpload} />
-          <ContactsInput
+          <ContactsForm
             onFormSubmit={onFormSubmit}
             initData={{ phone: numberToSave }}
           />

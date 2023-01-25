@@ -5,7 +5,7 @@ import {
   InputLabel,
   Input,
   ErrorMsgStyled,
-} from 'components/ContactsForm/ContactsForm.styled';
+} from 'components/Forms/FormStyles.styled';
 import { Box } from 'components/reusableComponents';
 
 const validationSchema = yup.object().shape({
@@ -17,16 +17,7 @@ const validationSchema = yup.object().shape({
       /^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$/,
       "Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
     )
-    .required('Please enter contact name'),
-  phone: yup
-    .string()
-    .min(3)
-    .max(20)
-    .matches(
-      /\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}/,
-      'Phone number must be digits and can contain spaces, dashes, parentheses and can start with +'
-    )
-    .required('Please enter contact number'),
+    .required('Please enter name'),
   email: yup
     .string()
     .min(5)
@@ -34,14 +25,24 @@ const validationSchema = yup.object().shape({
     .matches(
       /^(([^<>()\]\\.,;:\s@"]+(\.[^<>()\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
       'Email must to match next format: example@mail.com'
-    ),
+    )
+    .required('Please enter email'),
+  password: yup
+    .string()
+    .min(3)
+    .max(14)
+    .matches(
+      /^[a-zA-Z]\w{3,14}$/,
+      "The password's first character must be a letter, it must contain at least 4 characters and no more than 15 characters and no characters other than letters, numbers and the underscore may be used"
+    )
+    .required('Please enter password'),
 });
 
-const ContactsInput = ({ onFormSubmit, initData: { name, phone, email } }) => {
+const RegistrationForm = ({ onFormSubmit }) => {
   const initialValues = {
-    name,
-    phone,
-    email,
+    name: '',
+    email: '',
+    password: '',
   };
 
   const onSubmit = (values, { resetForm }) => {
@@ -56,35 +57,30 @@ const ContactsInput = ({ onFormSubmit, initData: { name, phone, email } }) => {
         validationSchema={validationSchema}
         onSubmit={onSubmit}
       >
-        <Form autoComplete="off" id="my-form">
+        <Form autoComplete="off" id="regForm">
           <InputLabel>
             Name
             <Input type="text" name="name" />
           </InputLabel>
           <ErrorMsgStyled component="span" name="name" />
           <InputLabel>
-            Number
-            <Input type="tel" name="phone" />
-          </InputLabel>
-          <ErrorMsgStyled component="span" name="phone" />
-          <InputLabel>
             Email
             <Input type="email" name="email" />
           </InputLabel>
           <ErrorMsgStyled component="span" name="email" />
+          <InputLabel>
+            Password
+            <Input type="password" name="password" />
+          </InputLabel>
+          <ErrorMsgStyled component="span" name="password" />
         </Form>
       </Formik>
     </Box>
   );
 };
 
-ContactsInput.propTypes = {
+RegistrationForm.propTypes = {
   onFormSubmit: PropTypes.func.isRequired,
-  initData: PropTypes.shape({
-    name: PropTypes.string,
-    phone: PropTypes.string,
-    email: PropTypes.string,
-  }),
 };
 
-export default ContactsInput;
+export default RegistrationForm;
