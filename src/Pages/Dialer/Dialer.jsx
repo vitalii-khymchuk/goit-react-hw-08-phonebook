@@ -23,8 +23,8 @@ const Dialer = () => {
   }, [filter]);
 
   const filteredContacts = contacts.filter(
-    ({ name, phone }) =>
-      name.toLowerCase().includes(locFilter) || phone.includes(locFilter)
+    ({ name, number }) =>
+      name.toLowerCase().includes(locFilter) || number.includes(locFilter)
   );
 
   const onCallBtnPress = () => makeCall(number);

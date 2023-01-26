@@ -2,15 +2,18 @@ import PropTypes from 'prop-types';
 import { ContactsItemStyled, Avatar, ContactName } from './ContactsItem.styled';
 import LinkToContact from 'components/LinkToContact';
 
-const ContactsItem = ({ data: { name, phone, id, avatar } }) => {
+const ContactsItem = ({ data: { name, number, id } }) => {
+  const avatarLetter = name[0].toUpperCase();
   return (
     <>
       <LinkToContact id={id}>
         <ContactsItemStyled>
-          <Avatar src={avatar} alt={`${name}'s avatar`} />
+          <Avatar>
+            <span>{avatarLetter}</span>
+          </Avatar>
           <div>
             <ContactName>{name}</ContactName>
-            <span>{phone}</span>
+            <span>{number}</span>
           </div>
         </ContactsItemStyled>
       </LinkToContact>

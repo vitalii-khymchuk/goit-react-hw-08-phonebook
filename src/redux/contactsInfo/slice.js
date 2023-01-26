@@ -4,6 +4,7 @@ import {
   fetchContacts,
   deleteContact,
   addContact,
+  getContactInfo,
   editContact,
 } from './operations';
 
@@ -11,6 +12,7 @@ const initialState = {
   items: [],
   isLoading: false,
   error: null,
+  selectedItem: {},
 };
 
 const pendingHandler = state => ({
@@ -32,7 +34,13 @@ const fulfilledHandler = (state, { payload }) => ({
   error: null,
 });
 
-const extraActions = [fetchContacts, deleteContact, addContact, editContact];
+const extraActions = [
+  fetchContacts,
+  deleteContact,
+  addContact,
+  getContactInfo,
+  editContact,
+];
 
 const contactsSlice = createSlice({
   name: 'contacts',
@@ -56,6 +64,9 @@ const contactsSlice = createSlice({
       .addCase(editContact.fulfilled, (state, { payload }) => {
         const index = state.items.findIndex(({ id }) => id === payload.id);
         state.items.splice(index, 1, payload);
+      })
+      .addCase(getContactInfo.fulfilled, (state, { payload }) => {
+        state.selectedItem = payload;
       })
       .addMatcher(
         action =>

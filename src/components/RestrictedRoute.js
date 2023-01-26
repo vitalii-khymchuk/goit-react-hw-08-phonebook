@@ -4,7 +4,7 @@ const { selectAuthData } = require('redux/auth/selectors');
 
 const RestrictedRoute = ({ component: Component, redirectTo = '/' }) => {
   const { isLoggedIn } = useSelector(selectAuthData);
-  return isLoggedIn ? <Navigate to={redirectTo} /> : Component ;
+  return isLoggedIn ? <Navigate to={redirectTo} replace /> : Component;
 };
 
 export default RestrictedRoute;

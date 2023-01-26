@@ -5,7 +5,7 @@ const { selectAuthData } = require('redux/auth/selectors');
 const PrivateRoute = ({ component: Component, redirectTo = '/' }) => {
   const { isLoggedIn, isRefreshing } = useSelector(selectAuthData);
   const shouldRedirect = !isLoggedIn && !isRefreshing;
-  return shouldRedirect ? <Navigate to={redirectTo} /> : Component;
+  return shouldRedirect ? <Navigate to={redirectTo} replace /> : Component;
 };
 
 export default PrivateRoute;

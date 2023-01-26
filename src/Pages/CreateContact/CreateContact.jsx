@@ -9,6 +9,8 @@ import base64userAvatar from 'photos/base64userAvatar';
 import Uploader from 'components/Uploader';
 import ContactsForm from 'components/Forms/CreateContactForm';
 import Error from 'components/Error';
+import { useAddContactsInfoMutation } from 'redux/contactsInfo/contactsInfoAPI';
+import twoInOne from 'utils/twoInOne';
 
 const CreateContact = () => {
   const [photo, setPhoto] = useState(null);
@@ -18,14 +20,20 @@ const CreateContact = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const onPhotoUpload = base64Photo => setPhoto(base64Photo);
+  const [addContactInfo, { isLoading }] = useAddContactsInfoMutation();
 
   const onFormSubmit = async values => {
     setIsSaving(true);
     const avatar = photo ?? base64userAvatar;
     const contactData = { ...values, avatar };
-    const { payload } = await dispatch(addContact(contactData));
-    const id = payload.id;
-    navigate(`/contacts/${id}`, { replace: true });
+    const { data } = await addContactInfo(contactData);
+    // тут в одну строку number я зберігаю і номер і id за яким можна добути ще інформації про контакт
+    const shortContactData = {
+      name: values.name,
+      number: twoInOne.save(values.phone, data.id),
+    };
+    const { payload } = await dispatch(addContact(shortContactData));
+    navigate(`/contacts/${payload.id}`, { replace: true });
   };
 
   const onCancelClick = () => navigate('/');

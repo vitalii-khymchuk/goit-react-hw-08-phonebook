@@ -7,6 +7,7 @@ import {
   selectContactInfo,
   selectIsContactsLoading,
   selectContactsError,
+  selectFilteredContacts,
 } from 'redux/contacts/selectors';
 import {
   ProfileAvatar,
@@ -22,6 +23,7 @@ import { makeCall, writeEmail } from 'utils/phoneAPI';
 import { Box } from 'components/reusableComponents';
 import avatarPlaceholder from 'photos/avatarIsLoading.gif';
 import Error from 'components/Error';
+import { useGetContactInfoQuery } from 'redux/contactsInfo/contactsInfoAPI';
 
 const formateDate = date => new Date(date).toLocaleString();
 
@@ -30,24 +32,31 @@ const ContactInfo = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  useEffect(() => {
-    const promise = dispatch(getContactInfo(id));
-    return () => {
-      promise.abort();
-      dispatch(clearContactsInfo());
-    };
-  }, [dispatch, id]);
-  const isLoading = useSelector(selectIsContactsLoading);
-  const error = useSelector(selectContactsError);
-  const contactsInfo = useSelector(selectContactInfo);
+  const contacts = useSelector(selectFilteredContacts);
+  const extraId = contacts.find(item => item.id === id).extraId;
+  const { data, isFetching, error } = useGetContactInfoQuery({ extraId });
+  console.log(data);
+  if (!data) return <>sorry</>;
+  // useEffect(() => {
+  //   const promise = dispatch(getContactInfo(id));
+  //   return () => {
+  //     promise.abort();
+  //     dispatch(clearContactsInfo());
+  //   };
+  // }, [dispatch, id]);
 
-  const { avatar, createdAt, email, name, phone } = contactsInfo;
-  const profileAvatar = isLoading || !avatar ? avatarPlaceholder : avatar;
+  const { avatar, createdAt, email, name, phone } = data;
+  // const { name, number: phone } = data;
+  // const avatar = '';
+  // const email = '';
+  // const createdAt = '';
+  const profileAvatar = isFetching || !avatar ? avatarPlaceholder : avatar;
   const backPath = location.state?.from ?? '/';
   const onCallClick = () => makeCall(phone);
   const onEmailClick = () => writeEmail(email);
   const onDeleteClick = () => {
     dispatch(deleteContact(id));
+
     navigate(backPath, { replace: true, state: location.state });
   };
   const onBackClick = () => {
@@ -56,7 +65,7 @@ const ContactInfo = () => {
 
   const onEditClick = () => {
     navigate(`/edit/&{id}`, {
-      state: { ...location.state, contactsInfo },
+      state: { ...location.state, data },
     });
   };
 
@@ -85,7 +94,7 @@ const ContactInfo = () => {
           <ProfileAvatar src={profileAvatar} alt={`${name}'s avatar`} />
         </Box>
         {error && <Error msg={error} />}
-        {!isLoading && !error && (
+        {!isFetching && !error && (
           <Box mt="10px" px="15px">
             <Name>{name}</Name>
             <CallEmailBtn onClick={onCallClick}>

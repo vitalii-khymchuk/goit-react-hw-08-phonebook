@@ -1,7 +1,9 @@
 import { Routes, Route } from 'react-router-dom';
 import { useEffect, lazy } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { fetchContacts } from 'redux/contacts/operations';
+import auth from 'redux/auth/operations';
+import { selectAuthData } from 'redux/auth/selectors';
 
 import PrivateRoute from './PrivateRoute';
 import RestrictedRoute from './RestrictedRoute';
@@ -17,13 +19,20 @@ const ContactInfo = lazy(() => import('Pages/ContactInfo'));
 const EditContact = lazy(() => import('Pages/EditContact'));
 
 const App = () => {
+  const { isLoggedIn } = useSelector(selectAuthData);
   const dispatch = useDispatch();
-  // useEffect(() => {
-  //   const promise = dispatch(fetchContacts());
-  //   return () => {
-  //     promise.abort();
-  //   };
-  // }, [dispatch]);
+  useEffect(() => {
+    dispatch(auth.refresh());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      const promise = dispatch(fetchContacts());
+      return () => {
+        promise.abort();
+      };
+    }
+  }, [dispatch, isLoggedIn]);
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
