@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from 'redux/contacts/operations';
+// import { addContact } from 'redux/contacts/operations';
 import { selectContactsError } from 'redux/contacts/selectors';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CreateContNav, NavItem } from './CreateContact.styled';
@@ -10,30 +10,32 @@ import Uploader from 'components/Uploader';
 import ContactsForm from 'components/Forms/CreateContactForm';
 import Error from 'components/Error';
 import { useAddContactsInfoMutation } from 'redux/contactsInfo/contactsInfoAPI';
+import { useAddContactMutation } from 'redux/contacts/operations';
 import twoInOne from 'utils/twoInOne';
 
 const CreateContact = () => {
   const [photo, setPhoto] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
-  const error = useSelector(selectContactsError);
+  const error = '';
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
   const onPhotoUpload = base64Photo => setPhoto(base64Photo);
-  const [addContactInfo, { isLoading }] = useAddContactsInfoMutation();
+  const [addContactInfo] = useAddContactsInfoMutation();
+  const [addContactToList] = useAddContactMutation();
 
   const onFormSubmit = async values => {
     setIsSaving(true);
     const avatar = photo ?? base64userAvatar;
     const contactData = { ...values, avatar };
-    const { data } = await addContactInfo(contactData);
+    const { data: res1 } = await addContactInfo(contactData);
     // тут в одну строку number я зберігаю і номер і id за яким можна добути ще інформації про контакт
     const shortContactData = {
       name: values.name,
-      number: twoInOne.save(values.phone, data.id),
+      number: twoInOne.save(values.phone, res1.id),
     };
-    const { payload } = await dispatch(addContact(shortContactData));
-    navigate(`/contacts/${payload.id}`, { replace: true });
+    await addContactToList(shortContactData);
+    navigate(`/contacts/${res1.id}`, { replace: true });
   };
 
   const onCancelClick = () => navigate('/');

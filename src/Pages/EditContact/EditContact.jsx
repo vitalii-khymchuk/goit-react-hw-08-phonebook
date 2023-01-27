@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { editContact } from 'redux/contacts/operations';
-import { selectContactsError } from 'redux/contacts/selectors';
+
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   CreateContNav,
@@ -13,16 +12,22 @@ import Uploader from 'components/Uploader';
 import ContactsInput from 'components/Forms/CreateContactForm';
 import Error from 'components/Error';
 import { useEffect } from 'react';
+import { useEditContactMutation } from 'redux/contacts/operations';
+import { useUpdateContactsInfoMutation } from 'redux/contactsInfo/contactsInfoAPI';
+import twoInOne from 'utils/twoInOne';
 
 const CreateContact = () => {
   const [photo, setPhoto] = useState(null);
   const [initData, setInitData] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
-  const error = useSelector(selectContactsError);
+  const [updContactInList] = useEditContactMutation();
+  const [updContactInfo] = useUpdateContactsInfoMutation();
+  const error = '';
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
   const initContactInfo = location.state.contactsInfo;
+  const baseId = location.state.baseId;
 
   useEffect(() => {
     setPhoto(initContactInfo.avatar);
@@ -33,9 +38,17 @@ const CreateContact = () => {
     setIsSaving(true);
     const avatar = photo ?? base64userAvatar;
     const contactData = { ...initData, ...values, avatar };
-    const { payload } = await dispatch(editContact(contactData));
-    const id = payload.id;
-    navigate(`/contacts/${id}`, {
+    const shortContactData = {
+      name: contactData.name,
+      number: twoInOne.save(contactData.phone, contactData.id),
+    };
+    await updContactInfo({
+      body: contactData,
+      extraId: contactData.id,
+    });
+    await updContactInList({ data: shortContactData, id: baseId });
+
+    navigate(`/contacts/${contactData.id}`, {
       state: location.state,
       replace: true,
     });
@@ -51,7 +64,7 @@ const CreateContact = () => {
   return (
     <Box display="grid" gridTemplateRows="50px 1fr">
       <CreateContNav CreateContNav>
-        <NavItem type="submit" form="my-form">
+        <NavItem type="submit" form="createContactForm">
           Save
         </NavItem>
         <NavItem type="button" onClick={onCancelClick}>

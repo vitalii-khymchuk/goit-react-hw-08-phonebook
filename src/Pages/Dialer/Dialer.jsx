@@ -9,19 +9,20 @@ import Numpad from 'components/Keyboard';
 import ContactsList from 'components/ContactsList';
 import Filter from 'components/Filter';
 import Error from 'components/Error';
+import { useFetchContactsQuery } from 'redux/contacts/operations';
 
 const Dialer = () => {
   const [number, setNumber] = useState('');
   const [locFilter, setLocFilter] = useState('');
-  const error = useSelector(selectContactsError);
+  const error = '';
   const filter = useSelector(selectFilter);
-  const contacts = useSelector(selectContacts);
   const navigate = useNavigate();
+  const { data: contacts } = useFetchContactsQuery();
 
   useEffect(() => {
     setLocFilter(filter);
   }, [filter]);
-
+  if (!contacts) return <></>;
   const filteredContacts = contacts.filter(
     ({ name, number }) =>
       name.toLowerCase().includes(locFilter) || number.includes(locFilter)

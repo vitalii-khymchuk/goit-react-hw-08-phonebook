@@ -14,6 +14,7 @@ import { filterSlice } from './filter/filterSlice';
 import { contactsSlice } from './contacts/contactsSlice';
 import { authSlice } from './auth/slice';
 import { contactsInfoAPI } from './contactsInfo/contactsInfoAPI';
+import { contactsAPI } from './contacts/operations';
 
 const middleware = [
   ...getDefaultMiddleware({
@@ -22,6 +23,7 @@ const middleware = [
     },
   }),
   contactsInfoAPI.middleware,
+  contactsAPI.middleware,
 ];
 
 const authPersistConfig = {
@@ -32,10 +34,11 @@ const authPersistConfig = {
 
 const store = configureStore({
   reducer: {
-    [contactsSlice.name]: contactsSlice.reducer,
+    // [contactsSlice.name]: contactsSlice.reducer,
     [filterSlice.name]: filterSlice.reducer,
     [authSlice.name]: persistReducer(authPersistConfig, authSlice.reducer),
     [contactsInfoAPI.reducerPath]: contactsInfoAPI.reducer,
+    [contactsAPI.reducerPath]: contactsAPI.reducer,
   },
   middleware,
   devTools: process.env.NODE_ENV === 'development',

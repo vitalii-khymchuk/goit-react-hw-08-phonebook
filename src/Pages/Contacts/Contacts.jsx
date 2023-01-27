@@ -7,14 +7,21 @@ import {
   selectContactsError,
   selectFilteredContacts,
 } from 'redux/contacts/selectors';
+import { selectFilter } from 'redux/filter/selectors';
+import { useFetchContactsQuery } from 'redux/contacts/operations';
 
 const Contacts = () => {
-  const error = useSelector(selectContactsError);
-  const filteredContacts = useSelector(selectFilteredContacts);
+  const filter = useSelector(selectFilter);
+  const { data: contacts, error } = useFetchContactsQuery();
+  const filteredContacts = contacts.filter(
+    ({ name, number }) =>
+      name.toLowerCase().includes(filter) || number.includes(filter)
+  );
+  console.log(error);
   return (
     <>
       {error ? (
-        <Error msg={error} />
+        <Error error={error} />
       ) : (
         <>
           <Filter />

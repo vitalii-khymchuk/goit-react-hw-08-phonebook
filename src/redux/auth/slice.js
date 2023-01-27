@@ -27,6 +27,7 @@ const loggedInHandler = (state, { payload }) => {
   state.user = { ...payload.user };
   state.token = payload.token;
   state.isLoggedIn = true;
+  // state.isRefreshing = false;
 };
 
 const resetState = state => {
@@ -35,7 +36,7 @@ const resetState = state => {
   state.isLoggedIn = false;
 };
 
-const refreshHandler = (state, { payload }) => {
+const refreshFulfilledHandler = (state, { payload }) => {
   state.user = { ...payload };
   state.isLoggedIn = true;
   state.isRefreshing = false;
@@ -49,9 +50,12 @@ const authSlice = createSlice({
       .addCase(auth.registration.fulfilled, loggedInHandler)
       .addCase(auth.logIn.fulfilled, loggedInHandler)
       .addCase(auth.logOut.fulfilled, resetState)
-      .addCase(auth.refresh.fulfilled, refreshHandler)
+      .addCase(auth.refresh.fulfilled, refreshFulfilledHandler)
       .addCase(auth.refresh.pending, state => {
         state.isRefreshing = true;
+      })
+      .addCase(auth.refresh.rejected, state => {
+        state.isRefreshing = false;
       })
       .addMatcher(
         action =>

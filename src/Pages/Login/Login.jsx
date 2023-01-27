@@ -11,14 +11,13 @@ import LogInForm from 'components/Forms/LogInForm';
 import Error from 'components/Error';
 
 const LogIn = () => {
-  const error = useSelector(selectContactsError);
+  const error = '';
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
-  const onFormSubmit = async values => {
-    await dispatch(auth.logIn(values));
-    // navigate(`/contacts/${id}`, { replace: true });
+  const onFormSubmit = values => {
+    dispatch(auth.logIn(values));
   };
 
   const onRegBtnClick = () => navigate('/registration');

@@ -11,15 +11,13 @@ import RegistrationForm from 'components/Forms/RegistrationForm';
 import Error from 'components/Error';
 
 const Registration = () => {
-  const error = useSelector(selectContactsError);
+  const error = '';
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
-  const onFormSubmit = async values => {
-    await dispatch(auth.registration(values));
-
-    // navigate(`/contacts/${id}`, { replace: true });
+  const onFormSubmit = values => {
+    dispatch(auth.registration(values));
   };
 
   const onSignInClick = () => navigate('/login');

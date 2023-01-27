@@ -2,11 +2,11 @@ import PropTypes from 'prop-types';
 import { ContactsItemStyled, Avatar, ContactName } from './ContactsItem.styled';
 import LinkToContact from 'components/LinkToContact';
 
-const ContactsItem = ({ data: { name, number, id } }) => {
+const ContactsItem = ({ data: { name, number, extraId } }) => {
   const avatarLetter = name[0].toUpperCase();
   return (
     <>
-      <LinkToContact id={id}>
+      <LinkToContact id={extraId}>
         <ContactsItemStyled>
           <Avatar>
             <span>{avatarLetter}</span>
@@ -24,9 +24,8 @@ const ContactsItem = ({ data: { name, number, id } }) => {
 ContactsItem.propTypes = {
   data: PropTypes.shape({
     name: PropTypes.string.isRequired,
-    phone: PropTypes.string.isRequired,
-    id: PropTypes.string.isRequired,
-    avatar: PropTypes.string,
+    number: PropTypes.string.isRequired,
+    extraId: PropTypes.string.isRequired,
   }).isRequired,
 };
 

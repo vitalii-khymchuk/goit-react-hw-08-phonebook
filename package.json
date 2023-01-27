@@ -28,6 +28,7 @@
     "react-scripts": "5.0.1",
     "react-simple-keyboard": "^3.5.4",
     "react-toastify": "^9.1.1",
+    "reactjs-popup": "^2.0.5",
     "redux-persist": "^6.0.0",
     "simple-keyboard-input-mask": "^3.0.526",
     "styled-system": "^5.1.5",

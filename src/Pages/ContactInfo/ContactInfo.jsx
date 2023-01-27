@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { getContactInfo, deleteContact } from 'redux/contacts/operations';
+// import { getContactInfo, deleteContact } from 'redux/contacts/operations';
 import { clearContactsInfo } from 'redux/contacts/contactsSlice';
 import {
   selectContactInfo,
@@ -24,39 +24,34 @@ import { Box } from 'components/reusableComponents';
 import avatarPlaceholder from 'photos/avatarIsLoading.gif';
 import Error from 'components/Error';
 import { useGetContactInfoQuery } from 'redux/contactsInfo/contactsInfoAPI';
+import { useFetchContactsQuery } from 'redux/contacts/operations';
+import { useDeleteContactsInfoMutation } from 'redux/contactsInfo/contactsInfoAPI';
+import { useDeleteContactMutation } from 'redux/contacts/operations';
 
 const formateDate = date => new Date(date).toLocaleString();
 
 const ContactInfo = () => {
-  const { id } = useParams();
+  const { id: extraId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const contacts = useSelector(selectFilteredContacts);
-  const extraId = contacts.find(item => item.id === id).extraId;
-  const { data, isFetching, error } = useGetContactInfoQuery({ extraId });
-  console.log(data);
-  if (!data) return <>sorry</>;
-  // useEffect(() => {
-  //   const promise = dispatch(getContactInfo(id));
-  //   return () => {
-  //     promise.abort();
-  //     dispatch(clearContactsInfo());
-  //   };
-  // }, [dispatch, id]);
+  const { data: contacts = [] } = useFetchContactsQuery();
+  const baseId =
+    contacts.length > 0
+      ? contacts.find(item => item.extraId === extraId).id
+      : '';
+  const { data = {}, isFetching, error } = useGetContactInfoQuery({ extraId });
 
+  const [deleteContactFromList] = useDeleteContactMutation(baseId);
+  const [deleteContactInfo] = useDeleteContactsInfoMutation(extraId);
   const { avatar, createdAt, email, name, phone } = data;
-  // const { name, number: phone } = data;
-  // const avatar = '';
-  // const email = '';
-  // const createdAt = '';
   const profileAvatar = isFetching || !avatar ? avatarPlaceholder : avatar;
   const backPath = location.state?.from ?? '/';
   const onCallClick = () => makeCall(phone);
   const onEmailClick = () => writeEmail(email);
   const onDeleteClick = () => {
-    dispatch(deleteContact(id));
-
+    deleteContactInfo(extraId);
+    deleteContactFromList(baseId);
     navigate(backPath, { replace: true, state: location.state });
   };
   const onBackClick = () => {
@@ -64,8 +59,8 @@ const ContactInfo = () => {
   };
 
   const onEditClick = () => {
-    navigate(`/edit/&{id}`, {
-      state: { ...location.state, data },
+    navigate(`/edit/${extraId}`, {
+      state: { ...location.state, contactsInfo: data, baseId },
     });
   };
 
@@ -93,7 +88,7 @@ const ContactInfo = () => {
           </NavBar>
           <ProfileAvatar src={profileAvatar} alt={`${name}'s avatar`} />
         </Box>
-        {error && <Error msg={error} />}
+        {error && <Error error={error} />}
         {!isFetching && !error && (
           <Box mt="10px" px="15px">
             <Name>{name}</Name>

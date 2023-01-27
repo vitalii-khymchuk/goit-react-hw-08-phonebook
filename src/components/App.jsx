@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchContacts } from 'redux/contacts/operations';
 import auth from 'redux/auth/operations';
 import { selectAuthData } from 'redux/auth/selectors';
+import { useFetchContactsQuery } from 'redux/contacts/operations';
 
 import PrivateRoute from './PrivateRoute';
 import RestrictedRoute from './RestrictedRoute';
@@ -19,62 +20,59 @@ const ContactInfo = lazy(() => import('Pages/ContactInfo'));
 const EditContact = lazy(() => import('Pages/EditContact'));
 
 const App = () => {
-  const { isLoggedIn } = useSelector(selectAuthData);
+  const { isRefreshing } = useSelector(selectAuthData);
+
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(auth.refresh());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (isLoggedIn) {
-      const promise = dispatch(fetchContacts());
-      return () => {
-        promise.abort();
-      };
-    }
-  }, [dispatch, isLoggedIn]);
   return (
-    <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route
-          index
-          element={<PrivateRoute redirectTo="/login" component={<Dialer />} />}
-        />
-        <Route
-          path="contacts"
-          element={
-            <PrivateRoute redirectTo="/login" component={<Contacts />} />
-          }
-        />
-        <Route
-          path="new"
-          element={
-            <PrivateRoute redirectTo="/login" component={<CreateContact />} />
-          }
-        />
-        <Route
-          path="contacts/:id"
-          element={
-            <PrivateRoute redirectTo="/login" component={<ContactInfo />} />
-          }
-        />
-        <Route
-          path="edit/:id"
-          element={
-            <PrivateRoute redirectTo="/login" component={<EditContact />} />
-          }
-        />
+    !isRefreshing && (
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route
+            index
+            element={
+              <PrivateRoute redirectTo="/login" component={<Dialer />} />
+            }
+          />
+          <Route
+            path="contacts"
+            element={
+              <PrivateRoute redirectTo="/login" component={<Contacts />} />
+            }
+          />
+          <Route
+            path="new"
+            element={
+              <PrivateRoute redirectTo="/login" component={<CreateContact />} />
+            }
+          />
+          <Route
+            path="contacts/:id"
+            element={
+              <PrivateRoute redirectTo="/login" component={<ContactInfo />} />
+            }
+          />
+          <Route
+            path="edit/:id"
+            element={
+              <PrivateRoute redirectTo="/login" component={<EditContact />} />
+            }
+          />
 
-        <Route
-          path="registration"
-          element={<RestrictedRoute component={<Registration />} />}
-        />
-        <Route
-          path="login"
-          element={<RestrictedRoute component={<LogIn />} />}
-        />
-      </Route>
-    </Routes>
+          <Route
+            path="registration"
+            element={<RestrictedRoute component={<Registration />} />}
+          />
+          <Route
+            path="login"
+            element={<RestrictedRoute component={<LogIn />} />}
+          />
+        </Route>
+      </Routes>
+    )
   );
 };
 
