@@ -2,14 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import twoInOne from 'utils/twoInOne';
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { dynamicSort } from 'utils/sort';
-const sortAZ = contacts => {
-  const items = [...contacts];
-  if (items.length > 1) {
-    return items.sort(dynamicSort('name'));
-  }
-  return items;
-};
+import { sortAZ } from 'utils/sort';
 
 const extractNumbers = (data = []) =>
   data.map(item => ({
@@ -43,14 +36,11 @@ export const contactsAPI = createApi({
   endpoints(build) {
     return {
       fetchContacts: build.query({
-        query: () => ({ url: '/contactss', method: 'get' }),
+        query: () => ({ url: '/contacts', method: 'get' }),
         providesTags: ['contacts'],
         transformResponse: (response, meta, arg) => {
-          const formatedContacts = extractNumbers(response);
-          return sortAZ(formatedContacts);
-        },
-        async onQueryStarted(body, { queryFulfilled }) {
-          queryFulfilled.catch(console.log);
+          const formattedContacts = extractNumbers(response);
+          return sortAZ(formattedContacts);
         },
       }),
       addContact: build.mutation({

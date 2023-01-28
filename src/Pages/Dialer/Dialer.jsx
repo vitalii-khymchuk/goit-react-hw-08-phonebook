@@ -14,15 +14,13 @@ import { useFetchContactsQuery } from 'redux/contacts/operations';
 const Dialer = () => {
   const [number, setNumber] = useState('');
   const [locFilter, setLocFilter] = useState('');
-  const error = '';
   const filter = useSelector(selectFilter);
   const navigate = useNavigate();
-  const { data: contacts } = useFetchContactsQuery();
-
+  const { data: contacts = [], error = '' } = useFetchContactsQuery();
   useEffect(() => {
     setLocFilter(filter);
   }, [filter]);
-  if (!contacts) return <></>;
+
   const filteredContacts = contacts.filter(
     ({ name, number }) =>
       name.toLowerCase().includes(locFilter) || number.includes(locFilter)
@@ -39,10 +37,11 @@ const Dialer = () => {
     setNumber(number);
     setLocFilter(number);
   };
+
   return (
     <>
       {error ? (
-        <Error msg={error} />
+        <Error error={error} />
       ) : (
         <>
           <Filter />

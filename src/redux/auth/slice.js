@@ -10,17 +10,7 @@ const initialState = {
 };
 
 const rejectedHandler = (_, { payload }) => {
-  payload &&
-    toast.info(payload, {
-      position: 'top-center',
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'light',
-    });
+  payload && toast.info(payload);
 };
 
 const loggedInHandler = (state, { payload }) => {

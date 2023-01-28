@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { Box } from 'components/reusableComponents';
 
 const Error = ({ error }) => {
+  console.log(error);
   const errorMsg = `${error?.data} (status: ${error.status})`;
   return (
     <Box p={15}>

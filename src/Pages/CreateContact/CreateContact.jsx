@@ -12,6 +12,7 @@ import Error from 'components/Error';
 import { useAddContactsInfoMutation } from 'redux/contactsInfo/contactsInfoAPI';
 import { useAddContactMutation } from 'redux/contacts/operations';
 import twoInOne from 'utils/twoInOne';
+import { toast } from 'react-toastify';
 
 const CreateContact = () => {
   const [photo, setPhoto] = useState(null);
@@ -21,8 +22,26 @@ const CreateContact = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const onPhotoUpload = base64Photo => setPhoto(base64Photo);
-  const [addContactInfo] = useAddContactsInfoMutation();
-  const [addContactToList] = useAddContactMutation();
+  const [
+    addContactInfo,
+    { isSuccess: isSuccess1, isLoading: isLoading1, isError: isError1 },
+  ] = useAddContactsInfoMutation();
+  const [
+    addContactToList,
+    { isSuccess: isSuccess2, isLoading: isLoading2, isError: isError2 },
+  ] = useAddContactMutation();
+
+  !isLoading1 &&
+    isSuccess1 &&
+    !isLoading2 &&
+    isSuccess2 &&
+    toast.success('Contact created!');
+
+  !isLoading1 &&
+    isError1 &&
+    !isLoading2 &&
+    isError2 &&
+    toast.error("Contact was'nt created...");
 
   const onFormSubmit = async values => {
     setIsSaving(true);

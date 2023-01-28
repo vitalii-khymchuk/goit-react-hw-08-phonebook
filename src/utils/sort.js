@@ -15,4 +15,12 @@ const dynamicSort = property => {
   };
 };
 
-export { dynamicSort };
+const sortAZ = contacts => {
+  const items = [...contacts];
+  if (items.length > 1) {
+    return items.sort(dynamicSort('name'));
+  }
+  return items;
+};
+
+export { sortAZ };

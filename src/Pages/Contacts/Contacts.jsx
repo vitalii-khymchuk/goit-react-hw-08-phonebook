@@ -12,12 +12,11 @@ import { useFetchContactsQuery } from 'redux/contacts/operations';
 
 const Contacts = () => {
   const filter = useSelector(selectFilter);
-  const { data: contacts, error } = useFetchContactsQuery();
+  const { data: contacts = [], error = '' } = useFetchContactsQuery();
   const filteredContacts = contacts.filter(
     ({ name, number }) =>
       name.toLowerCase().includes(filter) || number.includes(filter)
   );
-  console.log(error);
   return (
     <>
       {error ? (
@@ -26,7 +25,14 @@ const Contacts = () => {
         <>
           <Filter />
           <Box height="700px" overflowY="scroll">
-            <ContactsList contacts={filteredContacts} />
+            {contacts.length > 0 ? (
+              <ContactsList contacts={filteredContacts} />
+            ) : (
+              <>
+                <h2>There are no contacts here</h2>
+                <h3>You can create first...</h3>
+              </>
+            )}
           </Box>
         </>
       )}

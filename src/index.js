@@ -9,12 +9,23 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './index.css';
 
+const toastParams = {
+  position: 'top-center',
+  autoClose: 5000,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: true,
+  draggable: true,
+  progress: undefined,
+  theme: 'light',
+};
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter basename="/goit-react-hw-07-phonebook">
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <ToastContainer />
+          <ToastContainer {...toastParams} />
           <App />
         </PersistGate>
       </Provider>
