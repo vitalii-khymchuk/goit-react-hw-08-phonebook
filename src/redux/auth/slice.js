@@ -1,23 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit';
 import auth from './operations';
-import { toast } from 'react-toastify';
 
 const initialState = {
   user: { name: null, email: null },
   token: null,
   isLoggedIn: false,
   isRefreshing: false,
-};
-
-const rejectedHandler = (_, { payload }) => {
-  payload && toast.info(payload);
+  error: null,
 };
 
 const loggedInHandler = (state, { payload }) => {
   state.user = { ...payload.user };
   state.token = payload.token;
   state.isLoggedIn = true;
-  // state.isRefreshing = false;
 };
 
 const resetState = state => {
@@ -46,12 +41,7 @@ const authSlice = createSlice({
       })
       .addCase(auth.refresh.rejected, state => {
         state.isRefreshing = false;
-      })
-      .addMatcher(
-        action =>
-          action.type.startsWith('auth/') && action.type.endsWith('/rejected'),
-        rejectedHandler
-      ),
+      }),
 });
 
 export { authSlice };

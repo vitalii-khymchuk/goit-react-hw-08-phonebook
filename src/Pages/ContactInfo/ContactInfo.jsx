@@ -1,14 +1,5 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-// import { getContactInfo, deleteContact } from 'redux/contacts/operations';
-import { clearContactsInfo } from 'redux/contacts/contactsSlice';
-import {
-  selectContactInfo,
-  selectIsContactsLoading,
-  selectContactsError,
-  selectFilteredContacts,
-} from 'redux/contacts/selectors';
 import {
   ProfileAvatar,
   Name,
@@ -23,35 +14,75 @@ import { makeCall, writeEmail } from 'utils/phoneAPI';
 import { Box } from 'components/reusableComponents';
 import avatarPlaceholder from 'photos/avatarIsLoading.gif';
 import Error from 'components/Error';
-import { useGetContactInfoQuery } from 'redux/contactsInfo/contactsInfoAPI';
-import { useFetchContactsQuery } from 'redux/contacts/operations';
-import { useDeleteContactsInfoMutation } from 'redux/contactsInfo/contactsInfoAPI';
-import { useDeleteContactMutation } from 'redux/contacts/operations';
+import {
+  useGetContactInfoQuery,
+  useDeleteContactsInfoMutation,
+} from 'redux/contactsInfo/contactsInfoAPI';
+import {
+  useFetchContactsQuery,
+  useDeleteContactMutation,
+} from 'redux/contacts/contactsAPI';
+
+import { toast } from 'react-toastify';
 
 const formateDate = date => new Date(date).toLocaleString();
 
 const ContactInfo = () => {
+  const [isDeleting, setIsDeleting] = useState(false);
   const { id: extraId } = useParams();
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+
   const { data: contacts = [] } = useFetchContactsQuery();
+  const {
+    data: contactInfo = {},
+    isFetching,
+    error,
+  } = useGetContactInfoQuery({ extraId });
+
   const baseId =
     contacts.length > 0
       ? contacts.find(item => item.extraId === extraId).id
       : '';
-  const { data = {}, isFetching, error } = useGetContactInfoQuery({ extraId });
 
-  const [deleteContactFromList] = useDeleteContactMutation(baseId);
-  const [deleteContactInfo] = useDeleteContactsInfoMutation(extraId);
-  const { avatar, createdAt, email, name, phone } = data;
+  const [
+    deleteContactFromList,
+    { isSuccess: isSuccess1, isLoading: isLoading1, isError: isError1 },
+  ] = useDeleteContactMutation(baseId);
+  const [
+    deleteContactInfo,
+    // { isSuccess: isSuccess2, isLoading: isLoading2, isError: isError2 },
+  ] = useDeleteContactsInfoMutation(extraId);
+
+  //При видаленні чомусь на mockapi робиться 2 запити, один з них на неправельну адресу
+  // тому ми отримуємо сповіщення що контакт не видалено, хоча насправді видалено
+  // неправелі сповіщення будуть якщо розкоментувати рядки нижче
+
+  // !isLoading2 &&
+  // isSuccess2 &&
+  !isLoading1 &&
+    isSuccess1 &&
+    toast.success('Contact deleted!', {
+      toastId: '3',
+    });
+  // (!isLoading2 && isError2) ||
+  !isLoading1 &&
+    isError1 &&
+    toast.error("Contact was'nt deleted...", {
+      toastId: '4',
+    });
+
+  const { avatar, createdAt, email, name, phone } = contactInfo;
+
   const profileAvatar = isFetching || !avatar ? avatarPlaceholder : avatar;
   const backPath = location.state?.from ?? '/';
+
   const onCallClick = () => makeCall(phone);
   const onEmailClick = () => writeEmail(email);
-  const onDeleteClick = () => {
-    deleteContactInfo(extraId);
-    deleteContactFromList(baseId);
+  const onDeleteClick = async () => {
+    setIsDeleting(true);
+    await deleteContactInfo(extraId);
+    await deleteContactFromList(baseId);
     navigate(backPath, { replace: true, state: location.state });
   };
   const onBackClick = () => {
@@ -60,7 +91,7 @@ const ContactInfo = () => {
 
   const onEditClick = () => {
     navigate(`/edit/${extraId}`, {
-      state: { ...location.state, contactsInfo: data, baseId },
+      state: { ...location.state, contactsInfo: contactInfo, baseId },
     });
   };
 
@@ -89,7 +120,8 @@ const ContactInfo = () => {
           <ProfileAvatar src={profileAvatar} alt={`${name}'s avatar`} />
         </Box>
         {error && <Error error={error} />}
-        {!isFetching && !error && (
+        {isDeleting && <h2>Deleting...</h2>}
+        {!error && !isDeleting && (
           <Box mt="10px" px="15px">
             <Name>{name}</Name>
             <CallEmailBtn onClick={onCallClick}>

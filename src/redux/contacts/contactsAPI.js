@@ -1,4 +1,3 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import twoInOne from 'utils/twoInOne';
 import { createApi } from '@reduxjs/toolkit/query/react';
@@ -24,7 +23,6 @@ const axiosBaseQuery =
           data: axiosError.message,
         },
       };
-      console.log(error);
       return error;
     }
   };

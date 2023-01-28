@@ -1,10 +1,8 @@
 import { Routes, Route } from 'react-router-dom';
 import { useEffect, lazy } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchContacts } from 'redux/contacts/operations';
 import auth from 'redux/auth/operations';
 import { selectAuthData } from 'redux/auth/selectors';
-import { useFetchContactsQuery } from 'redux/contacts/operations';
 
 import PrivateRoute from './PrivateRoute';
 import RestrictedRoute from './RestrictedRoute';

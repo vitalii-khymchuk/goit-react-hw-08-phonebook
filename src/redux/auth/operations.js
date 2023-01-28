@@ -1,4 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { toast } from 'react-toastify';
 import axios from 'axios';
 axios.defaults.baseURL = 'https://connections-api.herokuapp.com/';
 
@@ -21,13 +22,13 @@ const registration = createAsyncThunk(
     } catch (error) {
       switch (error.response.status) {
         case 400:
-          return thunkAPI.rejectWithValue(
-            'User creation error. Please try again...'
-          );
+          toast.info('User creation error. Please try again...');
+          break;
         case 500:
-          return thunkAPI.rejectWithValue('Server error. Please try again...');
+          toast.info('Server error. Please try again...');
+          break;
         default:
-          return thunkAPI.rejectWithValue('Unknown error. Please try again...');
+          toast.info('Unknown error. Please try again...');
       }
     }
   }
@@ -41,11 +42,10 @@ const logIn = createAsyncThunk('auth/login', async (credentials, thunkAPI) => {
   } catch (error) {
     switch (error.response.status) {
       case 400:
-        return thunkAPI.rejectWithValue(
-          'Incorrect user data. Please try again...'
-        );
+        toast.info('Incorrect user data. Please try again...');
+        break;
       default:
-        return thunkAPI.rejectWithValue('Unknown error. Please try again...');
+        toast.info('Unknown error. Please try again...');
     }
   }
 });
@@ -56,7 +56,7 @@ const logOut = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
     token.reset();
     return data;
   } catch (error) {
-    return thunkAPI.rejectWithValue('Unknown error. Please authorize again...');
+    toast.info('Unknown error. Please try again...');
   }
 });
 
@@ -67,11 +67,11 @@ const refresh = createAsyncThunk('auth/refresh', async (_, thunkAPI) => {
     if (persistedToken === null) return thunkAPI.rejectWithValue(null);
     token.set(persistedToken);
     const { data } = await axios.get('/users/current');
-    console.log(data);
     return data;
   } catch (error) {
-    return thunkAPI.rejectWithValue('Unknown error. Please authorize again...');
+    toast.info('Unknown error. Please try again...');
   }
 });
 
-export default { registration, logIn, logOut, refresh };
+const auth = { registration, logIn, logOut, refresh };
+export default auth;

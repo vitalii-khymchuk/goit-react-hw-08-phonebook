@@ -1,4 +1,5 @@
 import { selectUserData } from 'redux/auth/selectors';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   PopupStyled,
   AccountBtn,
@@ -7,11 +8,10 @@ import {
   Title,
 } from './UserPopUp.styled';
 import 'reactjs-popup/dist/index.css';
-import { useDispatch, useSelector } from 'react-redux';
-import auth from 'redux/auth/operations';
 import { AiOutlineClose } from 'react-icons/ai';
 import { BiLogOut } from 'react-icons/bi';
 import { Box } from 'components/reusableComponents';
+import auth from 'redux/auth/operations';
 
 const UserPopUp = () => {
   const { name, email } = useSelector(selectUserData);

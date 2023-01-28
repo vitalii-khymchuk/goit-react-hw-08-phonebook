@@ -3,12 +3,8 @@ import Filter from 'components/Filter';
 import Error from 'components/Error';
 import { useSelector } from 'react-redux';
 import { Box } from 'components/reusableComponents';
-import {
-  selectContactsError,
-  selectFilteredContacts,
-} from 'redux/contacts/selectors';
 import { selectFilter } from 'redux/filter/selectors';
-import { useFetchContactsQuery } from 'redux/contacts/operations';
+import { useFetchContactsQuery } from 'redux/contacts/contactsAPI';
 
 const Contacts = () => {
   const filter = useSelector(selectFilter);
@@ -30,7 +26,7 @@ const Contacts = () => {
             ) : (
               <>
                 <h2>There are no contacts here</h2>
-                <h3>You can create first...</h3>
+                <h3>You can create the first...</h3>
               </>
             )}
           </Box>

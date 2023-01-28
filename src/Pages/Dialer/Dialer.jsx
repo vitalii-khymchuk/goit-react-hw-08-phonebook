@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { selectContacts, selectContactsError } from 'redux/contacts/selectors';
 import { selectFilter } from 'redux/filter/selectors';
 import { useNavigate } from 'react-router-dom';
 import { makeCall } from 'utils/phoneAPI';
@@ -9,7 +8,7 @@ import Numpad from 'components/Keyboard';
 import ContactsList from 'components/ContactsList';
 import Filter from 'components/Filter';
 import Error from 'components/Error';
-import { useFetchContactsQuery } from 'redux/contacts/operations';
+import { useFetchContactsQuery } from 'redux/contacts/contactsAPI';
 
 const Dialer = () => {
   const [number, setNumber] = useState('');
