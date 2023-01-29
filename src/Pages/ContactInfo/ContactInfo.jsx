@@ -38,7 +38,7 @@ const ContactInfo = () => {
     data: contactInfo = {},
     isFetching,
     error,
-  } = useGetContactInfoQuery({ extraId });
+  } = useGetContactInfoQuery(extraId);
 
   const baseId =
     contacts.length > 0
@@ -51,26 +51,22 @@ const ContactInfo = () => {
   ] = useDeleteContactMutation(baseId);
   const [
     deleteContactInfo,
-    // { isSuccess: isSuccess2, isLoading: isLoading2, isError: isError2 },
+    { isSuccess: isSuccess2, isLoading: isLoading2, isError: isError2 },
   ] = useDeleteContactsInfoMutation(extraId);
 
-  //При видаленні чомусь на mockapi робиться 2 запити, один з них на неправельну адресу
-  // тому ми отримуємо сповіщення що контакт не видалено, хоча насправді видалено
-  // неправелі сповіщення будуть якщо розкоментувати рядки нижче
-
-  // !isLoading2 &&
-  // isSuccess2 &&
-  !isLoading1 &&
+  !isLoading2 &&
+    isSuccess2 &&
+    !isLoading1 &&
     isSuccess1 &&
     toast.success('Contact deleted!', {
       toastId: '3',
     });
-  // (!isLoading2 && isError2) ||
-  !isLoading1 &&
-    isError1 &&
-    toast.error("Contact was'nt deleted...", {
-      toastId: '4',
-    });
+  (!isLoading2 && isError2) ||
+    (!isLoading1 &&
+      isError1 &&
+      toast.error("Contact was'nt deleted...", {
+        toastId: '4',
+      }));
 
   const { avatar, createdAt, email, name, phone } = contactInfo;
 

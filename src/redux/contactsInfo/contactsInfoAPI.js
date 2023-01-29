@@ -10,11 +10,11 @@ export const contactsInfoAPI = createApi({
   tagTypes: ['contactsInfo'],
   endpoints: builder => ({
     getContactInfo: builder.query({
-      query: ({ extraId }) => ({ url: `/contacts/${extraId}` }),
+      query: extraId => ({ url: `/contacts/${extraId}` }),
       providesTags: ['contactsInfo'],
     }),
     deleteContactsInfo: builder.mutation({
-      query: ({ extraId }) => ({
+      query: extraId => ({
         url: `/contacts/${extraId}`,
         method: 'DELETE',
       }),
